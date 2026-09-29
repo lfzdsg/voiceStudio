@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>VoiceStudio</AssemblyName>
+    <DefaultItemExcludes>$(DefaultItemExcludes);.runtime/**;dist/**;.venv/**</DefaultItemExcludes>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
+    <Compile Remove="tests\**\*.cs" />
+    <Content Include="worker\**\*.py;worker\requirements.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

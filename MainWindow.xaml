@@ -1,0 +1,52 @@
+<Window x:Class="VoiceStudio.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Voice Studio · 实时字幕" Width="1080" Height="790" MinWidth="920" MinHeight="700" Background="#0D1721" Foreground="#E5ECF3" WindowStartupLocation="CenterScreen">
+  <Grid Margin="30,24">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <Grid Margin="0,0,0,24"><StackPanel><TextBlock Text="VOICE STUDIO" Foreground="#78E2C1" FontSize="12" FontWeight="SemiBold"/><TextBlock Text="听见，亦看见。" FontSize="30" FontWeight="SemiBold" Margin="0,6,0,5"/><TextBlock Text="为视频、桌面软件与游戏，生成实时字幕。" Foreground="#90A5B8" FontSize="13"/></StackPanel><Border HorizontalAlignment="Right" VerticalAlignment="Center" Background="#17372F" CornerRadius="14" Padding="14,7"><TextBlock Text="●  本机识别 · 音频不上传" Foreground="#78E2C1" FontSize="12"/></Border></Grid>
+    <Border Grid.Row="1" Background="{StaticResource Surface}" CornerRadius="12" Padding="20" Margin="0,0,0,18">
+      <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="145"/><ColumnDefinition Width="145"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+        <StackPanel Margin="0,0,18,0"><TextBlock Text="声音来源" Foreground="#90A5B8" Margin="0,0,0,8"/><DockPanel><Button DockPanel.Dock="Right" Content="↻" Margin="8,0,0,0" Padding="12,6" Click="RefreshDevices_Click" ToolTip="刷新播放设备" x:Name="RefreshButton"/><ComboBox x:Name="DeviceBox"/></DockPanel></StackPanel>
+        <StackPanel Grid.Column="1" Margin="0,0,16,0"><TextBlock Text="识别语言" Foreground="#90A5B8" Margin="0,0,0,8"/><ComboBox x:Name="LanguageBox" SelectedIndex="0"><ComboBoxItem Content="自动识别" Tag="auto"/><ComboBoxItem Content="中文" Tag="zh"/><ComboBoxItem Content="English" Tag="en"/><ComboBoxItem Content="日本語" Tag="ja"/></ComboBox></StackPanel>
+        <StackPanel Grid.Column="2" Margin="0,0,18,0"><TextBlock Text="识别模型" Foreground="#90A5B8" Margin="0,0,0,8"/><ComboBox x:Name="ModelBox" SelectedIndex="1" SelectionChanged="Model_Changed"><ComboBoxItem Content="tiny · 更快" Tag="tiny"/><ComboBoxItem Content="base · 均衡" Tag="base"/><ComboBoxItem Content="small · 更准" Tag="small"/><ComboBoxItem Content="turbo · GPU 推荐" Tag="large-v3-turbo"/><ComboBoxItem Content="medium · 高精度" Tag="medium"/><ComboBoxItem Content="large-v3 · 高精度" Tag="large-v3"/><ComboBoxItem Content="SenseVoice · 阿里" Tag="sensevoice-small"/></ComboBox></StackPanel>
+        <Button Grid.Column="3" x:Name="StartButton" Content="开始字幕" Background="{StaticResource Accent}" Foreground="#0C2922" FontWeight="SemiBold" Width="124" Height="40" VerticalAlignment="Bottom" Click="Start_Click"/>
+      </Grid>
+    </Border>
+    <Grid Grid.Row="2"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="270"/></Grid.ColumnDefinitions>
+      <Border Background="{StaticResource Surface}" CornerRadius="12" Padding="20" Margin="0,0,18,0">
+        <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+          <DockPanel><TextBlock Text="字幕记录" FontWeight="SemiBold" FontSize="17"/><TextBlock x:Name="CountText" Text="0 条" Foreground="#90A5B8" HorizontalAlignment="Right"/></DockPanel>
+          <Border Grid.Row="1" BorderBrush="#334657" BorderThickness="0,0,0,1" Margin="0,14,0,10" Padding="0,0,0,12"><TextBlock x:Name="PreviewText" Text="准备就绪后，点击「开始字幕」。" Foreground="#78E2C1" TextWrapping="Wrap" FontSize="15"/></Border>
+          <Grid Grid.Row="2"><TextBlock x:Name="EmptyText" Text="每一句，都留在这里。&#10;&#10;最终字幕会按时间排列。&#10;停止采集后，可导出本次记录。" Foreground="#678096" TextAlignment="Center" VerticalAlignment="Center" LineHeight="24"/>
+            <ListBox x:Name="CaptionList" Background="Transparent" Foreground="#E5ECF3" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+              <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Padding" Value="0,8"/></Style></ListBox.ItemContainerStyle>
+              <ListBox.ItemTemplate><DataTemplate><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="75"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Text="{Binding TimeLabel}" Foreground="#7492A7" FontSize="12" Margin="0,3,8,0"/><StackPanel Grid.Column="1"><TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="16" LineHeight="25"/><TextBlock Text="{Binding TranslationDisplay}" Foreground="#78E2C1" TextWrapping="Wrap" FontSize="15" LineHeight="24"/></StackPanel></Grid></DataTemplate></ListBox.ItemTemplate>
+            </ListBox>
+          </Grid>
+          <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,14,0,0"><Button x:Name="ExportSrtButton" Content="导出 SRT" Click="ExportSrt_Click" IsEnabled="False"/><Button x:Name="ExportTextButton" Content="导出文本" Click="ExportText_Click" Margin="10,0,0,0" IsEnabled="False"/><Button x:Name="DeleteButton" Content="删除选中行" Click="Delete_Click" Margin="10,0,0,0" IsEnabled="False"/></StackPanel>
+        </Grid>
+      </Border>
+      <Border Grid.Column="1" Background="{StaticResource Surface}" CornerRadius="12" Padding="18">
+        <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+          <TextBlock Text="自动翻译" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,8"/>
+          <ComboBox x:Name="TranslationBackendBox" SelectedIndex="0" SelectionChanged="Translation_Changed" Margin="0,0,0,8"><ComboBoxItem Content="Qwen3 4B · 本机直译" Tag="qwen"/><ComboBoxItem Content="Argos · 轻量翻译" Tag="argos"/></ComboBox>
+          <ComboBox x:Name="TranslationBox" SelectedIndex="1" SelectionChanged="Translation_Changed"><ComboBoxItem Content="关闭翻译" Tag="off"/><ComboBoxItem Content="翻译成中文" Tag="zh"/><ComboBoxItem Content="Translate to English" Tag="en"/><ComboBoxItem Content="日本語に翻訳" Tag="ja"/></ComboBox>
+          <TextBlock Text="字幕显示 / 导出" Foreground="#90A5B8" Margin="0,10,0,6"/>
+          <ComboBox x:Name="DisplayBox" SelectedIndex="2" SelectionChanged="Display_Changed"><ComboBoxItem Content="仅原文"/><ComboBoxItem Content="仅译文"/><ComboBoxItem Content="原文 + 译文"/></ComboBox>
+          <TextBlock x:Name="TranslationStatus" Text="中日英互译 · 本机运行" Foreground="#90A5B8" FontSize="11" Margin="0,8,0,8" TextWrapping="Wrap"/>
+          <Button x:Name="TranslationDownloadButton" Content="下载中日英翻译包" Click="TranslationDownload_Click" Margin="0,0,0,18"/>
+          <TextBlock Text="悬浮字幕" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,16"/>
+          <CheckBox x:Name="ShowOverlayBox" Content="显示字幕窗口" IsChecked="True" Click="OverlayOptions_Changed" Margin="0,0,0,12"/>
+          <CheckBox x:Name="LockOverlayBox" Content="锁定位置 · 鼠标穿透" IsChecked="True" Click="OverlayOptions_Changed"/>
+          <TextBlock Text="字号" Foreground="#90A5B8" Margin="0,20,0,6"/><Slider x:Name="FontSlider" Minimum="18" Maximum="48" Value="28" ValueChanged="OverlayStyle_Changed"/>
+          <TextBlock Text="背景透明度" Foreground="#90A5B8" Margin="0,12,0,6"/><Slider x:Name="OpacitySlider" Minimum="0.1" Maximum="1" Value="0.8" ValueChanged="OverlayStyle_Changed"/>
+          <TextBlock Text="显示器" Foreground="#90A5B8" Margin="0,12,0,6"/><ComboBox x:Name="ScreenBox" SelectionChanged="Screen_Changed"/>
+          <Border Background="#233241" CornerRadius="8" Padding="12" Margin="0,18,0,18"><TextBlock Text="Ctrl + Alt + S   开始 / 停止&#10;Ctrl + Alt + H   显示 / 隐藏&#10;Ctrl + Alt + L   锁定 / 移动" Foreground="#A8BBCC" FontSize="12" LineHeight="22"/></Border>
+          <TextBlock Text="本机模型" FontWeight="SemiBold" FontSize="16"/><ComboBox x:Name="ComputeBox" SelectedIndex="0" Margin="0,8,0,0"><ComboBoxItem Content="自动 · 优先 NVIDIA GPU" Tag="auto"/><ComboBoxItem Content="CPU · 兼容模式" Tag="cpu"/><ComboBoxItem Content="NVIDIA GPU · CUDA" Tag="cuda"/></ComboBox><TextBlock x:Name="ModelStatus" Text="检查模型…" Foreground="#90A5B8" TextWrapping="Wrap" Margin="0,8,0,10" FontSize="12"/>
+          <ProgressBar x:Name="DownloadProgress" Height="4" Visibility="Collapsed" Margin="0,0,0,10"/>
+          <Button x:Name="DownloadButton" Content="下载模型" Click="Download_Click"/>
+          <TextBlock Text="识别自己说话：选择麦克风。&#10;识别视频或游戏：选择系统声音。&#10;游戏建议使用无边框窗口模式。" TextWrapping="Wrap" FontSize="11" Foreground="#7892A8" Margin="0,12,0,0" LineHeight="19"/>
+        </StackPanel></ScrollViewer>
+      </Border>
+    </Grid>
+    <Grid Grid.Row="3" Margin="0,18,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="110"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock x:Name="StatusText" Text="未开始 · 音频仅在本机处理" Foreground="#90A5B8" TextWrapping="Wrap" VerticalAlignment="Center"/><ProgressBar x:Name="LevelMeter" Grid.Column="1" Maximum="1" Height="5" Foreground="#78E2C1" Margin="12,0" VerticalAlignment="Center"/><TextBlock Grid.Column="2" x:Name="ElapsedText" Text="00:00:00" Foreground="#7892A8" VerticalAlignment="Center"/></Grid>
+  </Grid>
+</Window>

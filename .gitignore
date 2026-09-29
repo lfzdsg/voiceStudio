@@ -1,0 +1,12 @@
+bin/
+obj/
+.venv/
+models/
+dist/
+build/
+__pycache__/
+*.pyc
+.runtime/
+engine/
+*.wav
+*.log
