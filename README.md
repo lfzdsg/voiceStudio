@@ -42,7 +42,7 @@
 | 能力 | 说明 |
 | --- | --- |
 | 🎧 双来源采集 | WASAPI 系统回环（抓取电脑播放的声音）或麦克风输入，同一会话二选一 |
-| 🗣️ 多引擎识别 | SenseVoiceSmall（阿里，ONNX int8 / CPU）与 Whisper（faster-whisper，CPU / CUDA） |
+| 🗣️ 多引擎识别 | SenseVoiceSmall（阿里，ONNX int8 / CPU，**目前识别效果最佳**）与 Whisper（faster-whisper，CPU / CUDA） |
 | 🌐 六向互译 | 中文、日文、英文任意方向互译，同语言自动旁路保留原文 |
 | 🧠 本机翻译 | Qwen3-4B-Instruct-2507（llama.cpp，CUDA / CPU）直译；另提供 Argos 轻量翻译对比 |
 | 💬 双语悬浮窗 | 原文 / 译文 / 双语三种显示，可锁定鼠标穿透，适配多显示器 |
@@ -106,7 +106,7 @@ powershell -ExecutionPolicy Bypass -File scripts/setup-gpu.ps1
    - **自己说话**：选择「麦克风 · 默认输入设备」或具体麦克风。
    - **视频、桌面软件、游戏**：选择「系统声音 · 默认播放设备」或实际出声的耳机 / 扬声器。
 2. **选择识别模型**
-   先试「SenseVoice · 阿里」，语言选「自动识别」；主要看日语内容时可固定选「日本語」，减少短句自动判断错误。base 也已安装，可对比效果。
+   推荐首选「SenseVoice · 阿里」——目前实测识别效果最佳，语言选「自动识别」；主要看日语内容时可固定选「日本語」，减少短句自动判断错误。base 也已安装，可对比效果。
 3. **选择翻译器**
    选「Qwen3 4B · 本机直译」，目标「翻译成中文」，显示「原文 + 译文」或「仅译文」。也可选择英文、日文目标，实现六个方向互译；同语言直接保留原文。保留「Argos · 轻量翻译」可供对比。
 4. **开始字幕**
@@ -129,6 +129,8 @@ powershell -ExecutionPolicy Bypass -File scripts/setup-gpu.ps1
 ## 🧠 模型与计算设备
 
 第四版使用 Qwen3-4B-Instruct-2507 Q4_K_M 做日中直译；旧 Argos 的日中翻译仍经过英语中转。Qwen 在本机样例中改善了否定、条件和游戏台词翻译，但仍有误译和不自然措辞，不代表 YouTube 的翻译质量，详见 [Qwen 实测和使用说明](docs/QWEN_TRANSLATION.md)。这是文字翻译模型，Qwen3-ASR 与字节 Seed-ASR 尚未集成。
+
+识别方面，**SenseVoiceSmall（阿里）目前是效果最佳的识别模型**，推荐优先使用：它在中文、日文、英文上的准确率与标点表现优于本机实测的 Whisper base，且以 ONNX int8 在 CPU 上运行，不占用显存，可与 GPU 翻译并行。Whisper 各尺寸作为可选方案保留，供对比与特定场景使用。
 
 计算设备可选「自动」或「NVIDIA GPU · CUDA」。Whisper 识别和翻译支持 GPU；SenseVoice 识别仍使用 CPU / ONNX int8，可以同时用 GPU 翻译。开始后右侧显示实际识别和翻译设备。
 
